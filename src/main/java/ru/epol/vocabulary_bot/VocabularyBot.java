@@ -2,29 +2,24 @@ package ru.epol.vocabulary_bot;
 
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.epol.vocabulary_bot.service.MessageHandler;
+
 
 public class VocabularyBot extends TelegramWebhookBot {
     private String botUsername;
     private String botToken;
     private String botPath;
 
+    private MessageHandler messageHandler;
+
+    public VocabularyBot(MessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
+    }
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        if (update.getMessage() != null && update.getMessage().hasText()) {
-            long chatID = update.getMessage().getChatId();
-
-            try {
-                execute(new SendMessage(chatID, "Hello, " + update.getMessage().getText()));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-
-        }
-        return null;
+        return messageHandler.sendMsg(update);
     }
 
     @Override
