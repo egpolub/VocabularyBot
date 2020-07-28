@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import ru.epol.vocabulary_bot.keyboard.KeyBoardFacade;
 
 
 @Component
@@ -31,6 +32,7 @@ public class ResponseCreator {
         SendMessage reply;
         if (botCommand.equals(BotCommand.BOT_HELP)) {
             reply = new SendMessage(chatID, help);
+            KeyBoardFacade.setButtons(reply);
         } else if (botCommand.equals(BotCommand.BOT_ADD)) {
             reply = new SendMessage(chatID, add);
         } else if (botCommand.equals(BotCommand.BOT_READ)) {
