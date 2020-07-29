@@ -1,14 +1,17 @@
 package ru.epol.vocabulary_bot.service;
 
+import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.epol.vocabulary_bot.user.User;
 
 @Component
 public class MessageHandler {
     private BotCommand botCommand;
-    private ResponseCreator responseCreator;
+    private final ResponseCreator responseCreator;
+
 
     public MessageHandler(ResponseCreator responseCreator) {
         this.responseCreator = responseCreator;
@@ -19,10 +22,23 @@ public class MessageHandler {
         Message message = update.getMessage();
 
         if (message.getText() != null && message.hasText()) {
+            Long chatID = message.getChatId();
+
             textStatus(message.getText());
-            reply = responseCreator.response(message.getChatId(), botCommand);
+
+            User user = createUser();
+            user.setChatID(chatID);
+
+            System.out.println(user.getChatID());
+            reply = responseCreator.response(user, botCommand);
+
         }
         return reply;
+    }
+
+    @Lookup
+    public User createUser() {
+        return null;
     }
 
     private void textStatus(String text) {

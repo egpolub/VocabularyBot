@@ -1,49 +1,32 @@
 package ru.epol.vocabulary_bot.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import ru.epol.vocabulary_bot.user.User;
 
 
 @Component
-@PropertySource("classpath:text.properties")
 public class ResponseCreator {
-    @Value ("${text.help}")
-    private String help;
 
-    @Value ("${text.add}")
-    private String add;
-
-    @Value ("${text.read}")
-    private String read;
-
-    @Value ("${text.delete}")
-    private String delete;
-
-    @Value ("${text.settings}")
-    private String settings;
-
-    @Value ("${text.another}")
-    private String another;
-
-    public SendMessage response(long chatID, BotCommand botCommand) {
-        SendMessage reply;
-        if (botCommand.equals(BotCommand.BOT_HELP)) {
-            reply = new SendMessage(chatID, help);
-        } else if (botCommand.equals(BotCommand.BOT_ADD)) {
-            reply = new SendMessage(chatID, add);
-        } else if (botCommand.equals(BotCommand.BOT_READ)) {
-            reply = new SendMessage(chatID, read);
-        } else if (botCommand.equals(BotCommand.BOT_DELETE)) {
-            reply = new SendMessage(chatID, delete);
-        } else if (botCommand.equals(BotCommand.BOT_SETTINGS)) {
-            reply = new SendMessage(chatID, settings);
-        }
-        else {
-            reply = new SendMessage(chatID, another);
-        }
-
-        return reply;
-    }
+   public SendMessage response(User user, BotCommand botCommand) {
+       SendMessage reply;
+       switch (botCommand) {
+           case BOT_ADD:
+               reply = user.add();
+               break;
+           case BOT_READ:
+               reply = user.read();
+               break;
+           case BOT_DELETE:
+               reply = user.delete();
+               break;
+           case BOT_SETTINGS:
+               reply = user.settings();
+               break;
+           default:
+               reply = user.help();
+               break;
+       }
+       return reply;
+   }
 }
