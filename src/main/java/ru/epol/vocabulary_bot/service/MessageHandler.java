@@ -5,16 +5,20 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.epol.vocabulary_bot.cash.UserData;
 import ru.epol.vocabulary_bot.user.User;
+
 
 @Component
 public class MessageHandler {
     private BotCommand botCommand;
     private final ResponseCreator responseCreator;
+    private final UserData userData;
 
 
-    public MessageHandler(ResponseCreator responseCreator) {
+    public MessageHandler(ResponseCreator responseCreator, UserData userData) {
         this.responseCreator = responseCreator;
+        this.userData = userData;
     }
 
     public SendMessage sendMsg(Update update) {
@@ -23,13 +27,18 @@ public class MessageHandler {
 
         if (message.getText() != null && message.hasText()) {
             Long chatID = message.getChatId();
-
             textStatus(message.getText());
+            User user;
 
-            User user = createUser();
-            user.setChatID(chatID);
-
-            System.out.println(user.getChatID());
+            if (userData.getUserDataCash(chatID) == null) {
+                user = createUser();
+                user.setChatID(chatID);
+                userData.setUserDataCash(chatID, user);
+            }
+            else {
+                user = userData.getUserDataCash(chatID);
+            }
+            
             reply = responseCreator.response(user, botCommand);
 
         }
