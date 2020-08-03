@@ -1,32 +1,39 @@
 package ru.epol.vocabulary_bot.service;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.epol.vocabulary_bot.user.User;
 
 
-@Component
+@Service
 public class ResponseCreator {
 
-   public SendMessage response(User user, BotCommand botCommand) {
+   public SendMessage response(User user, String text) {
        SendMessage reply;
-       switch (botCommand) {
-           case BOT_ADD:
-               reply = user.add();
-               break;
-           case BOT_READ:
-               reply = user.read();
-               break;
-           case BOT_DELETE:
-               reply = user.delete();
-               break;
-           case BOT_SETTINGS:
-               reply = user.settings();
-               break;
-           default:
-               reply = user.help();
-               break;
+       String[] textSplit = text.split(" ");
+
+       try {
+           switch (textSplit[0]) {
+               case "/a":
+                   reply = user.add(textSplit[1]);
+                   break;
+               case "/r":
+                   reply = user.read();
+                   break;
+               case "/d":
+                   reply = user.delete();
+                   break;
+               case "/s":
+                   reply = user.settings();
+                   break;
+               default:
+                   reply = user.help();
+                   break;
+           }
+       } catch (ArrayIndexOutOfBoundsException e) {
+           reply = new SendMessage(user.getChatID(), "Maybe that you wrote wrong command");
        }
        return reply;
+
    }
 }

@@ -1,6 +1,5 @@
 package ru.epol.vocabulary_bot;
 
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,7 +11,7 @@ public class VocabularyBot extends TelegramWebhookBot {
     private String botToken;
     private String botPath;
 
-    private MessageHandler messageHandler;
+    private final MessageHandler messageHandler;
 
     public VocabularyBot(MessageHandler messageHandler) {
         this.messageHandler = messageHandler;

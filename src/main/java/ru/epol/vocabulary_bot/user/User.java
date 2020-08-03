@@ -33,7 +33,7 @@ public class User {
         return new SendMessage(chatID, help);
     }
 
-    public SendMessage add() {
+    public SendMessage add(String text) {
         return new SendMessage(chatID, add);
     }
 
@@ -48,6 +48,7 @@ public class User {
     public SendMessage settings() {
         return new SendMessage(chatID, settings);
     }
+
     public void setChatID(Long chatID) {
         this.chatID = chatID;
     }
