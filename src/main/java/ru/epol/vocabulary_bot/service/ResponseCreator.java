@@ -8,32 +8,41 @@ import ru.epol.vocabulary_bot.user.User;
 @Service
 public class ResponseCreator {
 
-   public SendMessage response(User user, String text) {
-       SendMessage reply;
-       String[] textSplit = text.split(" ");
+    public SendMessage response(User user, String text) {
+        SendMessage reply;
+        String[] textSplit = text.split(" ");
 
-       try {
-           switch (textSplit[0]) {
-               case "/a":
-                   reply = user.add(textSplit[1]);
-                   break;
-               case "/r":
-                   reply = user.read();
-                   break;
-               case "/d":
-                   reply = user.delete();
-                   break;
-               case "/s":
-                   reply = user.settings();
-                   break;
-               default:
-                   reply = user.help();
-                   break;
-           }
-       } catch (ArrayIndexOutOfBoundsException e) {
-           reply = new SendMessage(user.getChatID(), "Maybe that you wrote wrong command");
-       }
-       return reply;
+        try {
+            switch (textSplit[0]) {
+                case "/a":
+                    textSplit = textParser(text);
+                    user.add(textSplit[0].trim().toLowerCase(),
+                            textSplit[1].trim().toLowerCase());
+                    reply = new SendMessage(user.getChatID(), "" +
+                            "The dictionary has been updated");
+                    break;
+                case "/r":
+                    reply = user.read();
+                    break;
+                case "/d":
+                    user.delete(textSplit[1]);
+                    reply = new SendMessage(user.getChatID(), "The word has been deleted");
+                    break;
+                case "/s":
+                    reply = user.settings();
+                    break;
+                default:
+                    reply = user.help();
+                    break;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            reply = new SendMessage(user.getChatID(), "Maybe that you wrote wrong command");
+        }
+        return reply;
 
-   }
+    }
+
+    private String[] textParser(String text) {
+        return text.split("/a")[1].split("[*]");
+    }
 }
