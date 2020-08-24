@@ -11,6 +11,13 @@ import java.util.List;
 public interface WordRepository extends CrudRepository<Word, Integer> {
     List<Word> findByChatID(Long chatID);
 
+    List<Word> findByChatIDOrderByWord(Long chatID);
+
+    List<Word> findByChatIDOrderByTranslation(Long chatID);
+
     @Transactional
-    void deleteByChatIDAndWord(Long chatID, String word);
+    void deleteByChatIDAndWordOrTranslation(Long chatID, String word, String translation);
+
+    boolean existsByChatIDAndWordOrTranslation(Long chatID, String word, String translation);
+
 }

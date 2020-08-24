@@ -2,7 +2,7 @@ package ru.epol.vocabulary_bot.service;
 
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.epol.vocabulary_bot.cash.UserData;
 import ru.epol.vocabulary_bot.user.User;
@@ -19,8 +19,14 @@ public class MessageHandler {
         this.userData = userData;
     }
 
-    public SendMessage sendMsg(Update update) {
-        SendMessage reply = null;
+    public BotApiMethod<?> sendMsg(Update update) {
+        BotApiMethod<?> reply = null;
+
+        if (update.hasCallbackQuery()) {
+            Long chatID = update.getCallbackQuery().getMessage().getChatId();
+            reply = responseCreator.callbackResponse(checkUser(chatID), update.getCallbackQuery());
+            return reply;
+        }
 
         if (update.getMessage().getText() != null && update.getMessage().hasText()) {
             Long chatID = update.getMessage().getChatId();

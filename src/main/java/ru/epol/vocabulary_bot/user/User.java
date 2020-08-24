@@ -42,7 +42,24 @@ public class User {
         for (Word word : list) {
             text.append(String.format("%-15s--%15s", word.getWord(), word.getTranslation())).append("\n");
         }
+        return new SendMessage(getChatID(), text.append("</pre>").toString()).enableHtml(true);
+    }
 
+    public SendMessage sortWord() {
+        StringBuilder text = new StringBuilder("<pre>");
+        List<Word> list = dataService.sortWord(getChatID());
+        for (Word word : list) {
+            text.append(String.format("%-15s--%15s", word.getWord(), word.getTranslation())).append("\n");
+        }
+        return new SendMessage(getChatID(), text.append("</pre>").toString()).enableHtml(true);
+    }
+
+    public SendMessage sortTranslation() {
+        StringBuilder text = new StringBuilder("<pre>");
+        List<Word> list = dataService.sortTranslation(getChatID());
+        for (Word word : list) {
+            text.append(String.format("%-15s--%15s", word.getWord(), word.getTranslation())).append("\n");
+        }
         return new SendMessage(getChatID(), text.append("</pre>").toString()).enableHtml(true);
     }
 
@@ -54,6 +71,8 @@ public class User {
         return new SendMessage(chatID, settings);
     }
 
+    public boolean isWord(String word) { return dataService.isWord(getChatID(), word, word); }
+
     public void setChatID(Long chatID) {
         this.chatID = chatID;
     }
@@ -61,4 +80,5 @@ public class User {
     public Long getChatID() {
         return chatID;
     }
+
 }

@@ -22,7 +22,19 @@ public class WordDataService {
         wordRepository.save(new Word(chatID, word, translation));
     }
 
+    public boolean isWord(Long chatID, String word, String translation) {
+        return wordRepository.existsByChatIDAndWordOrTranslation(chatID, word, translation);
+    }
+
     public void delete(Long chatID, String word){
-        wordRepository.deleteByChatIDAndWord(chatID, word);
+        wordRepository.deleteByChatIDAndWordOrTranslation(chatID, word, word);
+    }
+
+    public List<Word> sortWord(Long chatID) {
+        return wordRepository.findByChatIDOrderByWord(chatID);
+    }
+
+    public List<Word> sortTranslation(Long chatID) {
+        return wordRepository.findByChatIDOrderByTranslation(chatID);
     }
 }
