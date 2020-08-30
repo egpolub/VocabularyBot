@@ -27,6 +27,7 @@ public class User {
     @Value ("${text.settings}")
     private String settings;
 
+    private boolean isMention = false;
 
     public SendMessage help() {
         return new SendMessage(chatID, help).enableMarkdown(true);
@@ -37,30 +38,29 @@ public class User {
     }
 
     public SendMessage read() {
-        StringBuilder text = new StringBuilder("<pre>");
-        List<Word> list = dataService.readChatID(getChatID());
-        for (Word word : list) {
-            text.append(String.format("%-15s--%15s", word.getWord(), word.getTranslation())).append("\n");
-        }
-        return new SendMessage(getChatID(), text.append("</pre>").toString()).enableHtml(true);
+        return new SendMessage(getChatID(), textFormat(readAllWord()).append("</pre>").toString()).enableHtml(true);
+    }
+
+    public List<Word> readAllWord() {
+        return dataService.readChatID(getChatID());
     }
 
     public SendMessage sortWord() {
-        StringBuilder text = new StringBuilder("<pre>");
-        List<Word> list = dataService.sortWord(getChatID());
-        for (Word word : list) {
-            text.append(String.format("%-15s--%15s", word.getWord(), word.getTranslation())).append("\n");
-        }
-        return new SendMessage(getChatID(), text.append("</pre>").toString()).enableHtml(true);
+        return new SendMessage(getChatID(), textFormat(dataService.sortWord(getChatID()))
+                .append("</pre>").toString()).enableHtml(true);
     }
 
     public SendMessage sortTranslation() {
+        return new SendMessage(getChatID(), textFormat(dataService.sortTranslation(getChatID()))
+                .append("</pre>").toString()).enableHtml(true);
+    }
+
+    private StringBuilder textFormat(List<Word> list) {
         StringBuilder text = new StringBuilder("<pre>");
-        List<Word> list = dataService.sortTranslation(getChatID());
         for (Word word : list) {
             text.append(String.format("%-15s--%15s", word.getWord(), word.getTranslation())).append("\n");
         }
-        return new SendMessage(getChatID(), text.append("</pre>").toString()).enableHtml(true);
+        return text;
     }
 
     public void delete(String word) {
@@ -73,6 +73,14 @@ public class User {
 
     public boolean isWord(String word) { return dataService.isWord(getChatID(), word, word); }
 
+    public boolean isMention() {
+        return isMention;
+    }
+
+    public void setMention(boolean mention) {
+        isMention = mention;
+    }
+
     public void setChatID(Long chatID) {
         this.chatID = chatID;
     }
@@ -82,3 +90,5 @@ public class User {
     }
 
 }
+
+

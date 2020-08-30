@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.epol.vocabulary_bot.entity.Word;
 import ru.epol.vocabulary_bot.repository.WordRepository;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -37,4 +38,5 @@ public class WordDataService {
     public List<Word> sortTranslation(Long chatID) {
         return wordRepository.findByChatIDOrderByTranslation(chatID);
     }
+
 }

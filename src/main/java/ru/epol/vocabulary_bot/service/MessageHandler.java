@@ -27,11 +27,15 @@ public class MessageHandler {
             reply = responseCreator.callbackResponse(checkUser(chatID), update.getCallbackQuery());
             return reply;
         }
-
-        if (update.getMessage().getText() != null && update.getMessage().hasText()) {
-            Long chatID = update.getMessage().getChatId();
-            reply = responseCreator.response(checkUser(chatID), update.getMessage().getText());
+        try {
+            if (update.getMessage().getText() != null && update.getMessage().hasText()) {
+                Long chatID = update.getMessage().getChatId();
+                reply = responseCreator.response(checkUser(chatID), update.getMessage().getText());
+            }
+        } catch (NullPointerException e) {
+            reply = null;
         }
+
 
         return reply;
     }

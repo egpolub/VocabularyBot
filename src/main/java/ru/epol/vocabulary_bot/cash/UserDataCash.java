@@ -16,6 +16,10 @@ public class UserDataCash implements UserData {
         map.put(chatID, user);
     }
 
+    public Map<Long, User> getMap() {
+        return map;
+    }
+
     @Override
     public User getUserDataCash(Long chatID) {
         return map.get(chatID);

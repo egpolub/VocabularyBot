@@ -19,6 +19,7 @@ public class ResponseCreator {
         SendMessage reply;
         String[] textSplit = text.split(" ");
 
+
         try {
             switch (textSplit[0]) {
                 case "/a":
@@ -30,7 +31,7 @@ public class ResponseCreator {
                     break;
                 case "/r":
                     reply = user.read();
-                    reply.setReplyMarkup(getInlineMessageButtons());
+                    reply.setReplyMarkup(getInlineMessageButtons("Sort by word", "Sort by translation"));
                     break;
                 case "/d":
                     if (user.isWord(textSplit[1].toLowerCase())) {
@@ -43,6 +44,7 @@ public class ResponseCreator {
                     break;
                 case "/s":
                     reply = user.settings();
+                    reply.setReplyMarkup(getInlineMessageButtons("Mention on", "Mention off"));
                     break;
                 default:
                     reply = user.help();
@@ -51,6 +53,7 @@ public class ResponseCreator {
         } catch (ArrayIndexOutOfBoundsException e) {
             reply = new SendMessage(user.getChatID(), "Maybe that you wrote wrong command");
         }
+
         return reply;
     }
 
@@ -58,12 +61,11 @@ public class ResponseCreator {
         return text.split("/a")[1].split("[*]");
     }
 
-    private InlineKeyboardMarkup getInlineMessageButtons() {
+    private InlineKeyboardMarkup getInlineMessageButtons(String firstButton, String secondButton) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        InlineKeyboardButton buttonYes = new InlineKeyboardButton().setText("Sort by word").setCallbackData("byWord");
-        InlineKeyboardButton buttonNo = new InlineKeyboardButton().setText("Sort by translation").
-                setCallbackData("byTranslation");
+        InlineKeyboardButton buttonYes = new InlineKeyboardButton().setText(firstButton).setCallbackData(firstButton);
+        InlineKeyboardButton buttonNo = new InlineKeyboardButton().setText(secondButton).setCallbackData(secondButton);
 
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(buttonYes);
@@ -78,9 +80,19 @@ public class ResponseCreator {
     public BotApiMethod<?> callbackResponse(User user, CallbackQuery callbackQuery) {
         BotApiMethod<?> callbackAnswer = null;
 
-        if (callbackQuery.getData().equals("byWord")) callbackAnswer = user.sortWord();
+        if (callbackQuery.getData().equals("Sort by word")) callbackAnswer = user.sortWord();
 
-        if (callbackQuery.getData().equals("byTranslation")) callbackAnswer = user.sortTranslation();
+        if (callbackQuery.getData().equals("Sort by translation")) callbackAnswer = user.sortTranslation();
+
+        if (callbackQuery.getData().equals("Mention on")) {
+            callbackAnswer = new SendMessage(user.getChatID(), "That's a bargain!");
+            user.setMention(true);
+        }
+        if (callbackQuery.getData().equals("Mention off")) {
+            callbackAnswer = new SendMessage(user.getChatID(), "\n" +
+                    "Okay, I won't push you on it.");
+            user.setMention(false);
+        }
 
         return callbackAnswer;
     }
