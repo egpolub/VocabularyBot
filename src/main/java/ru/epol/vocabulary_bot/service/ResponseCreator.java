@@ -3,9 +3,11 @@ package ru.epol.vocabulary_bot.service;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import ru.epol.vocabulary_bot.keyboard.KeyboardButtons;
 import ru.epol.vocabulary_bot.user.User;
+
 
 /**
  * Create response on update and callback messages.
@@ -71,6 +73,7 @@ public class ResponseCreator {
         return reply;
     }
 
+
     private String[] textParser(String text) {
         return text.split("/a")[1].split("[*]");
     }
@@ -88,6 +91,7 @@ public class ResponseCreator {
 
         if (callbackQuery.getData().equals("Mention on")) {
             user.setMention(true);
+
         }
         if (callbackQuery.getData().equals("Mention off")) {
             user.setMention(false);
