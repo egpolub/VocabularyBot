@@ -15,7 +15,6 @@ public class BotConfig {
     private String botPath;
 
 
-
     @Bean
     public VocabularyBot vocabularyBot(MessageHandler messageHandler) {
         VocabularyBot vocabularyBot = new VocabularyBot(messageHandler);
