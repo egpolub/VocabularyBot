@@ -4,21 +4,23 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import ru.epol.vocabulary_bot.keyboard.KeyboardButtons;
 import ru.epol.vocabulary_bot.user.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
+/**
+ * Create response on update and callback messages.
+ */
 @Service
 public class ResponseCreator {
+    private final KeyboardButtons button;
+
+    public ResponseCreator(KeyboardButtons button) {
+        this.button = button;
+    }
 
     public SendMessage response(User user, String text) {
         SendMessage reply;
         String[] textSplit = text.split(" ");
-
 
         try {
             switch (textSplit[0]) {
@@ -29,30 +31,42 @@ public class ResponseCreator {
                     reply = new SendMessage(user.getChatID(), "" +
                             "The dictionary has been updated");
                     break;
+                case "Read":
                 case "/r":
+                    if (user.read() != null) {
                     reply = user.read();
-                    reply.setReplyMarkup(getInlineMessageButtons("Sort by word", "Sort by translation"));
+                    reply.setReplyMarkup(button.getInlineMessageButtons("Sort by word", "Sort by translation"));
+                    }
+                    else {
+                        reply = new SendMessage(user.getChatID(), "Your vocabulary is empty");
+                    }
                     break;
                 case "/d":
-                    if (user.isWord(textSplit[1].toLowerCase())) {
-                        user.delete(textSplit[1].toLowerCase());
+                    //variable "word" it's a necessary measure for compound words.
+                    String word = text.replaceAll("/d", "").trim().toLowerCase();
+                    if (user.isWord(word)) {
+                        user.delete(word);
                         reply = new SendMessage(user.getChatID(), "The word has been deleted");
                     }
                     else {
                         reply = new SendMessage(user.getChatID(), "There is no such word in the dictionary");
                     }
                     break;
+                case "Settings":
                 case "/s":
                     reply = user.settings();
-                    reply.setReplyMarkup(getInlineMessageButtons("Mention on", "Mention off"));
+                    reply.setReplyMarkup(button.getInlineMessageButtons("Mention on", "Mention off"));
                     break;
                 default:
                     reply = user.help();
+                    button.setConstantButtons(reply);
                     break;
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             reply = new SendMessage(user.getChatID(), "Maybe that you wrote wrong command");
         }
+
+
 
         return reply;
     }
@@ -61,22 +75,10 @@ public class ResponseCreator {
         return text.split("/a")[1].split("[*]");
     }
 
-    private InlineKeyboardMarkup getInlineMessageButtons(String firstButton, String secondButton) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-        InlineKeyboardButton buttonYes = new InlineKeyboardButton().setText(firstButton).setCallbackData(firstButton);
-        InlineKeyboardButton buttonNo = new InlineKeyboardButton().setText(secondButton).setCallbackData(secondButton);
-
-        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
-        keyboardButtonsRow.add(buttonYes);
-        keyboardButtonsRow.add(buttonNo);
-
-        List<List<InlineKeyboardButton>> listKeyboardRow = new ArrayList<>();
-        listKeyboardRow.add(keyboardButtonsRow);
-
-        return inlineKeyboardMarkup.setKeyboard(listKeyboardRow);
-    }
-
+    /**
+     * Return Callback response on pressing buttons.
+     */
     public BotApiMethod<?> callbackResponse(User user, CallbackQuery callbackQuery) {
         BotApiMethod<?> callbackAnswer = null;
 
@@ -85,12 +87,9 @@ public class ResponseCreator {
         if (callbackQuery.getData().equals("Sort by translation")) callbackAnswer = user.sortTranslation();
 
         if (callbackQuery.getData().equals("Mention on")) {
-            callbackAnswer = new SendMessage(user.getChatID(), "That's a bargain!");
             user.setMention(true);
         }
         if (callbackQuery.getData().equals("Mention off")) {
-            callbackAnswer = new SendMessage(user.getChatID(), "\n" +
-                    "Okay, I won't push you on it.");
             user.setMention(false);
         }
 

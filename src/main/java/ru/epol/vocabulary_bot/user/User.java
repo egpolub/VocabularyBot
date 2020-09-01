@@ -38,7 +38,8 @@ public class User {
     }
 
     public SendMessage read() {
-        return new SendMessage(getChatID(), textFormat(readAllWord()).append("</pre>").toString()).enableHtml(true);
+        return readAllWord().size() > 0 ? new SendMessage(getChatID(),
+                textFormat(readAllWord()).toString()).enableHtml(true) : null;
     }
 
     public List<Word> readAllWord() {
@@ -47,12 +48,12 @@ public class User {
 
     public SendMessage sortWord() {
         return new SendMessage(getChatID(), textFormat(dataService.sortWord(getChatID()))
-                .append("</pre>").toString()).enableHtml(true);
+                .toString()).enableHtml(true);
     }
 
     public SendMessage sortTranslation() {
         return new SendMessage(getChatID(), textFormat(dataService.sortTranslation(getChatID()))
-                .append("</pre>").toString()).enableHtml(true);
+                .toString()).enableHtml(true);
     }
 
     private StringBuilder textFormat(List<Word> list) {
@@ -60,6 +61,7 @@ public class User {
         for (Word word : list) {
             text.append(String.format("%-15s--%15s", word.getWord(), word.getTranslation())).append("\n");
         }
+        text.append("</pre>");
         return text;
     }
 
@@ -68,7 +70,9 @@ public class User {
     }
 
     public SendMessage settings() {
-        return new SendMessage(chatID, settings);
+        String text = " *off*)";
+        if (isMention) text = " *on*)";
+        return new SendMessage(chatID, settings + text).enableMarkdown(true);
     }
 
     public boolean isWord(String word) { return dataService.isWord(getChatID(), word, word); }

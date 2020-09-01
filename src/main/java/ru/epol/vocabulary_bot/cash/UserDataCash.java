@@ -6,6 +6,12 @@ import ru.epol.vocabulary_bot.user.User;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * field Map contains:
+ * key = chatID User, value = object User.
+ */
+
 @Component
 public class UserDataCash implements UserData {
     private Map<Long, User> map = new HashMap<>();

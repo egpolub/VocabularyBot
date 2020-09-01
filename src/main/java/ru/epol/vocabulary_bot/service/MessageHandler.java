@@ -20,7 +20,7 @@ public class MessageHandler {
     }
 
     public BotApiMethod<?> sendMsg(Update update) {
-        BotApiMethod<?> reply = null;
+        BotApiMethod<?> reply;
 
         if (update.hasCallbackQuery()) {
             Long chatID = update.getCallbackQuery().getMessage().getChatId();
@@ -31,13 +31,12 @@ public class MessageHandler {
             if (update.getMessage().getText() != null && update.getMessage().hasText()) {
                 Long chatID = update.getMessage().getChatId();
                 reply = responseCreator.response(checkUser(chatID), update.getMessage().getText());
+                return reply;
             }
-        } catch (NullPointerException e) {
-            reply = null;
+        } catch (NullPointerException ignored) {
         }
 
-
-        return reply;
+        return null;
     }
 
     @Lookup
