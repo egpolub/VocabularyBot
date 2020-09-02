@@ -16,7 +16,7 @@ import java.util.Map;
  * Sends the user new words that have been added
  * to the dictionary during the day.
  *
- * Reminds every day at 20:18 Moscow time
+ * Reminds every day at 20:18 Moscow time.
  */
 @Service
 public class ScheduledService {
