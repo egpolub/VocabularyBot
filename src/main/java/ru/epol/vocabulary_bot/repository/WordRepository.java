@@ -20,4 +20,6 @@ public interface WordRepository extends CrudRepository<Word, Integer> {
 
     boolean existsByChatIDAndWordOrTranslation(Long chatID, String word, String translation);
 
+    boolean existsByChatIDAndWordAndTranslation(Long chatID, String word, String translation);
+
 }

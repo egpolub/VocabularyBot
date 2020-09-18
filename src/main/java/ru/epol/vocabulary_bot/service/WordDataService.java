@@ -26,6 +26,10 @@ public class WordDataService {
         return wordRepository.existsByChatIDAndWordOrTranslation(chatID, word, translation);
     }
 
+    public boolean isWordAndTranslation(Long chatID, String word, String translation) {
+        return wordRepository.existsByChatIDAndWordAndTranslation(chatID, word, translation);
+    }
+
     public void delete(Long chatID, String word){
         wordRepository.deleteByChatIDAndWordOrTranslation(chatID, word, word);
     }
@@ -37,5 +41,6 @@ public class WordDataService {
     public List<Word> sortTranslation(Long chatID) {
         return wordRepository.findByChatIDOrderByTranslation(chatID);
     }
+
 
 }

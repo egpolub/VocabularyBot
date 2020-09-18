@@ -29,6 +29,7 @@ public class ScheduledService {
         this.userData = userData;
     }
 
+
     @Scheduled(cron = "18 18 20 * * ?", zone = "Europe/Moscow")
     public void schedulerMessage() {
         Date currentDate = new Date();

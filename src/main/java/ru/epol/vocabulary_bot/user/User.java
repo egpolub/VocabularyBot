@@ -77,6 +77,10 @@ public class User {
 
     public boolean isWord(String word) { return dataService.isWord(getChatID(), word, word); }
 
+    public boolean isWordAndTranslation(String word, String translation) {
+        return dataService.isWordAndTranslation(getChatID(), word, translation);
+    }
+
     public boolean isMention() {
         return isMention;
     }

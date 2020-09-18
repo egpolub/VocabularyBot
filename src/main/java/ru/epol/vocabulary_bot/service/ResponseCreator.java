@@ -28,10 +28,20 @@ public class ResponseCreator {
             switch (textSplit[0]) {
                 case "/a":
                     textSplit = textParser(text);
-                    user.add(textSplit[0].trim().toLowerCase(),
-                            textSplit[1].trim().toLowerCase());
-                    reply = new SendMessage(user.getChatID(), "" +
-                            "The dictionary has been updated");
+                    String vocabularyWord = textSplit[0].trim().toLowerCase(),
+                            vocabularyTranslation = textSplit[1].trim().toLowerCase();
+
+                    // Checking to exclude the possibility of adding duplicate words to the dictionary.
+                    if (!user.isWordAndTranslation(vocabularyWord, vocabularyTranslation) &&
+                            !user.isWordAndTranslation(vocabularyTranslation, vocabularyWord)) {
+                        user.add(vocabularyWord, vocabularyTranslation);
+                        reply = new SendMessage(user.getChatID(), "" +
+                                "The dictionary has been updated");
+                    }
+                    else {
+                        reply = new SendMessage(user.getChatID(), "" +
+                                "The dictionary already has this word");
+                    }
                     break;
                 case "Read":
                 case "/r":
