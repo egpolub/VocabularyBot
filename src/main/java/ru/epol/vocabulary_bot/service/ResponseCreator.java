@@ -78,8 +78,6 @@ public class ResponseCreator {
             reply = new SendMessage(user.getChatID(), "Maybe that you wrote wrong command");
         }
 
-
-
         return reply;
     }
 
@@ -101,7 +99,6 @@ public class ResponseCreator {
 
         if (callbackQuery.getData().equals("Mention on")) {
             user.setMention(true);
-
         }
         if (callbackQuery.getData().equals("Mention off")) {
             user.setMention(false);
